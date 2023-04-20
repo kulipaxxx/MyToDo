@@ -14,6 +14,7 @@ namespace MyToDo.ViewModels
         public IndexViewModel() {
             TaskBars = new ObservableCollection<TaskBar>();
             CreateTaskBars();
+            CreateTestData();
         }
         
         private ObservableCollection<TaskBar> taskBars;
