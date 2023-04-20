@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AboutView.cs" />
     <Compile Remove="Common\Models\MemoDto_1.cs" />
   </ItemGroup>
 
