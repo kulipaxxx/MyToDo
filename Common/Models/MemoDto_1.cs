@@ -9,7 +9,7 @@ namespace MyToDo.Common.Models
 	/// <summary>
 	/// 代办事项
 	/// </summary>
-    public class ToDoDto : BaseDto
+    public class MemoDto : BaseDto
     {
         private string title;
         private string content;

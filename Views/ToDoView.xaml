@@ -75,68 +75,72 @@
                     HorizontalAlignment="Right"
                     Command="{Binding AddCommand}"
                     Content="+ 添加待办" />
+                <ScrollViewer Grid.Row="1">
+                    <ItemsControl
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        ItemsSource="{Binding ToDoDtos}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                <ItemsControl
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    ItemsSource="{Binding ToDoDtos}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <md:TransitioningContent OpeningEffect="{md:TransitionEffect Kind=ExpandIn}">
+                                    <Grid
+                                        Width="220"
+                                        MinHeight="180"
+                                        MaxHeight="250"
+                                        Margin="8">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid
-                                Width="220"
-                                MinHeight="180"
-                                MaxHeight="250"
-                                Margin="8">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
+                                        <md:PopupBox HorizontalAlignment="Right" Panel.ZIndex="1">
+                                            <Button Content="删除" />
+                                        </md:PopupBox>
 
-                                <md:PopupBox HorizontalAlignment="Right" Panel.ZIndex="1">
-                                    <Button Content="删除" />
-                                </md:PopupBox>
+                                        <Border
+                                            Grid.RowSpan="2"
+                                            Background="Green"
+                                            CornerRadius="5" />
 
-                                <Border
-                                    Grid.RowSpan="2"
-                                    Background="Green"
-                                    CornerRadius="5" />
+                                        <TextBlock
+                                            Padding="10,5"
+                                            FontWeight="Bold"
+                                            Text="{Binding Title}" />
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            Padding="10,5"
+                                            Text="{Binding Content}" />
+                                        <Canvas Grid.RowSpan="2" ClipToBounds="True">
+                                            <Border
+                                                Canvas.Top="10"
+                                                Canvas.Right="-50"
+                                                Width="120"
+                                                Height="120"
+                                                Background="#FFFFFF"
+                                                CornerRadius="100"
+                                                Opacity="0.1" />
+                                            <Border
+                                                Canvas.Top="80"
+                                                Canvas.Right="-30"
+                                                Width="120"
+                                                Height="120"
+                                                Background="#FFFFFF"
+                                                CornerRadius="100"
+                                                Opacity="0.1" />
+                                        </Canvas>
+                                    </Grid>
+                                </md:TransitioningContent>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
 
-                                <TextBlock
-                                    Padding="10,5"
-                                    FontWeight="Bold"
-                                    Text="{Binding Title}" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Padding="10,5"
-                                    Text="{Binding Content}" />
-                                <Canvas Grid.RowSpan="2" ClipToBounds="True">
-                                    <Border
-                                        Canvas.Top="10"
-                                        Canvas.Right="-50"
-                                        Width="120"
-                                        Height="120"
-                                        Background="#FFFFFF"
-                                        CornerRadius="100"
-                                        Opacity="0.1" />
-                                    <Border
-                                        Canvas.Top="80"
-                                        Canvas.Right="-30"
-                                        Width="120"
-                                        Height="120"
-                                        Background="#FFFFFF"
-                                        CornerRadius="100"
-                                        Opacity="0.1" />
-                                </Canvas>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
             </Grid>
         </md:DrawerHost>
     </md:DialogHost>

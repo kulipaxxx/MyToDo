@@ -14,7 +14,7 @@ namespace MyToDo.ViewModels
     {
         public ToDoViewModel()
         {
-            ToDoDtos = new ObservableCollection<ToDoDto>();
+            ToDoDtos = new ObservableCollection<MemoDto>();
             CreateToDoList();
             AddCommand = new DelegateCommand(Add);
         }
@@ -35,9 +35,9 @@ namespace MyToDo.ViewModels
 
         public DelegateCommand AddCommand { get; private set; }
 
-        private ObservableCollection<ToDoDto> toDoDtos;
+        private ObservableCollection<MemoDto> toDoDtos;
 
-        public ObservableCollection<ToDoDto> ToDoDtos
+        public ObservableCollection<MemoDto> ToDoDtos
         {
             get { return toDoDtos; }
             set { toDoDtos = value; RaisePropertyChanged(); }//通知更新 
@@ -46,7 +46,7 @@ namespace MyToDo.ViewModels
         void CreateToDoList()
         {
             for (int i = 0; i < 20; i++) {
-                ToDoDtos.Add(new ToDoDto()
+                ToDoDtos.Add(new MemoDto()
                 {
                     Title = "标题" + i,
                     Content = "模拟测试"
