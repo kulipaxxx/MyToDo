@@ -1,0 +1,17 @@
+﻿using MyToDo.API.Context;
+using MyToDo.Shared.Dtos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MyToDo.Service
+{
+    internal class ToDoService : BaseService<ToDoDto>, IToDoService
+    {
+        public ToDoService(HttpRestClient client, string serviceName) : base(client, serviceName)
+        {
+        }
+    }
+}
