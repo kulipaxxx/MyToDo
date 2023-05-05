@@ -43,7 +43,7 @@ namespace MyToDo.ViewModels
         {
             taskBars.Add(new TaskBar() { Icon = "ClockFast", Title = "汇总", Content = "9", Color = "#FF0CA0FF", Target = "" });
             taskBars.Add(new TaskBar() { Icon = "ClockCheckOutline", Title = "已完成", Content = "9", Color = "#FF1ECA3A", Target = "" });
-            taskBars.Add(new TaskBar() { Icon = "CharLineVariant", Title = "完成比例", Content = "100%", Color = "#FF02C6DC", Target = "" });
+            taskBars.Add(new TaskBar() { Icon = "ChartLineVariant", Title = "完成比例", Content = "100%", Color = "#FF02C6DC", Target = "" });
             taskBars.Add(new TaskBar() { Icon = "PlaylistStar", Title = "备忘录", Content = "2", Color = "#FFFFA000", Target = "" });
         }
 

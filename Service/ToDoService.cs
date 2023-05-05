@@ -10,8 +10,9 @@ namespace MyToDo.Service
 {
     internal class ToDoService : BaseService<ToDoDto>, IToDoService
     {
-        public ToDoService(HttpRestClient client, string serviceName) : base(client, serviceName)
+        public ToDoService(HttpRestClient client) : base(client, "ToDo")
         {
+
         }
     }
 }

@@ -17,8 +17,8 @@ namespace MyToDo.ViewModels
         public ToDoViewModel(IToDoService service)
         {
             ToDoDtos = new ObservableCollection<ToDoDto>();
-            CreateToDoList();
             AddCommand = new DelegateCommand(Add);
+            CreateToDoList();
             this.service = service;
         }
 
@@ -49,8 +49,18 @@ namespace MyToDo.ViewModels
 
         async void CreateToDoList()
         {
-            for (int i = 0; i < 10; i++) { 
-                toDoDtos.Add(new ToDoDto {  Id = i ,Content = "111"});
+            var todoResult = await service.GetAllAsync(new Shared.Parameters.QueryParameter()
+            {
+                PageIndex = 0,
+                PageSize = 100,
+            });
+            if (todoResult.Status)
+            {
+                ToDoDtos.Clear();
+                foreach(var todoDto in todoResult.Result.Items)
+                {
+                    ToDoDtos.Add(todoDto);
+                }
             }
         }
 
