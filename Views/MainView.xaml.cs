@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MyToDo.Extensions;
+using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,16 +21,29 @@ namespace MyToDo.Views
     /// </summary>
     public partial class MainView : Window
     {
-        public MainView()
+        public MainView(IEventAggregator aggregator)
         {
             InitializeComponent();
+
+            //注册等待消息窗口
+            aggregator.Resgiter(arg =>
+            {
+                DialogHost.IsOpen = arg.isOpen;
+
+                if(DialogHost.IsOpen)
+                {
+                    DialogHost.DialogContent = new ProgressView();
+                }
+            });
+
             menuBar.SelectionChanged += (s, e) =>
             {
                 drawerHost.IsLeftDrawerOpen = false;
             };
 
             btnMin.Click += (s, e) => { this.WindowState = WindowState.Minimized; };
-            btnMax.Click += (s, e) => {
+            btnMax.Click += (s, e) =>
+            {
                 if (this.WindowState == WindowState.Maximized)
                 {
                     this.WindowState = WindowState.Normal;
@@ -40,14 +55,16 @@ namespace MyToDo.Views
             };
             btnClose.Click += (s, e) => { this.Close(); };
 
-            ColorZone.MouseMove += (s, e) => {
+            ColorZone.MouseMove += (s, e) =>
+            {
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     this.DragMove();
                 }
             };
 
-            ColorZone.MouseDoubleClick += (s, e) => {
+            ColorZone.MouseDoubleClick += (s, e) =>
+            {
                 if (this.WindowState == WindowState.Normal)
                 {
                     this.WindowState = WindowState.Maximized;
