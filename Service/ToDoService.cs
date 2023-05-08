@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace MyToDo.Service
 {
-    internal class ToDoService : BaseService<ToDoDto>, IToDoService
+    public class ToDoService : BaseService<ToDoDto>, IToDoService
     {
         public ToDoService(HttpRestClient client) : base(client, "ToDo")
         {
-
+            
         }
     }
 }

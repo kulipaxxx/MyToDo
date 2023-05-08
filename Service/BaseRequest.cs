@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyToDo.Service
 {
-    internal class BaseRequest
+    public class BaseRequest
     {
         public Method Method { get; set; }
         public string Route { get; set; } 

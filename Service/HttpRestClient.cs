@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyToDo.Service
 {
-    internal class HttpRestClient
+    public class HttpRestClient
     {
         private readonly string apiUrl;
         protected readonly RestClient client;
@@ -40,7 +40,6 @@ namespace MyToDo.Service
                     Message = response.ErrorMessage
                 };
         }
-
 
         public async Task<ApiResponse<T>> ExecuteAsync<T>(BaseRequest baseRequest)
         {

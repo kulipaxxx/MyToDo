@@ -1,5 +1,6 @@
-﻿using MyToDo.Api.Service;
+﻿
 using MyToDo.Common.Models;
+using MyToDo.Service;
 using MyToDo.Shared.Dtos;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -18,8 +19,8 @@ namespace MyToDo.ViewModels
         {
             ToDoDtos = new ObservableCollection<ToDoDto>();
             AddCommand = new DelegateCommand(Add);
-            CreateToDoList();
             this.service = service;
+            CreateToDoList();
         }
 
         private bool isRightDrawerOpen;
@@ -49,17 +50,16 @@ namespace MyToDo.ViewModels
 
         async void CreateToDoList()
         {
-            var todoResult = await service.GetAllAsync(new Shared.Parameters.QueryParameter()
+            var todos = await service.GetAllAsync(new Shared.Parameters.QueryParameter()
             {
                 PageIndex = 0,
-                PageSize = 100,
+                PageSize = 10,
             });
-            if (todoResult.Status)
+
+            if (todos.Status)
             {
-                ToDoDtos.Clear();
-                foreach(var todoDto in todoResult.Result.Items)
-                {
-                    ToDoDtos.Add(todoDto);
+                foreach (var dto in todos.Result.Items) { 
+                    ToDoDtos.Add(dto);
                 }
             }
         }

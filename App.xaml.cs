@@ -29,10 +29,13 @@ namespace MyToDo
         {
             //注册HttpRest
             containerRegistry.GetContainer()
-               .Register<HttpRestClient>(made: Parameters.Of.Type<string>(serviceKey: "webUrl"));
-            containerRegistry.GetContainer().RegisterInstance(@"http://localhost:64496/", serviceKey: "webUrl");
+               .Register<HttpRestClient>(made: Parameters.Of.Type<string>(serviceKey: "apiUrl"));
+            containerRegistry.GetContainer().RegisterInstance(@"http://localhost:64496/", serviceKey: "apiUrl");
+            
             containerRegistry.Register<IToDoService, ToDoService>();
-
+            
+            containerRegistry.Register<IMemoService, MemoService>();
+            
             containerRegistry.RegisterForNavigation<AboutView>();
             containerRegistry.RegisterForNavigation<SkinView, SkinViewModel>();
             containerRegistry.RegisterForNavigation<IndexView, IndexViewModel>();

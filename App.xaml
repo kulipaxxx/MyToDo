@@ -23,9 +23,9 @@
                             <Grid>
                                 <Border x:Name="borderHeader" />
                                 <Border x:Name="border" />
-                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                             </Grid>
+
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter TargetName="borderHeader" Property="BorderThickness" Value="4,0,0,0" />

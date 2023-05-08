@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MyToDo.Service
 {
-    internal class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
+    public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
     {
         private readonly HttpRestClient client;
         private readonly string serviceName;
