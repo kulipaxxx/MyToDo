@@ -23,6 +23,7 @@ namespace MyToDo.ViewModels
             ToDoDtos = new ObservableCollection<ToDoDto>();
             ExecuteCommand = new DelegateCommand<string>(Execute);
             SelectedCommand = new DelegateCommand<ToDoDto>(Selected);
+            DeleteCommand = new DelegateCommand<ToDoDto>(Delete);
             this.service = service;
         }
 
@@ -60,6 +61,18 @@ namespace MyToDo.ViewModels
             get { return currentDto; }
             set { currentDto = value; RaisePropertyChanged(); }
         }
+        
+        /// <summary>
+        /// 下拉列表选中值
+        /// </summary>
+        private int selectIndex;
+
+        public int SelectIndex
+        {
+            get { return selectIndex; }
+            set { selectIndex = value; RaisePropertyChanged(); }
+        }
+
 
 
         public void Execute(string obj)
@@ -75,6 +88,7 @@ namespace MyToDo.ViewModels
         public DelegateCommand<string> ExecuteCommand { get; private set; }
         public DelegateCommand<ToDoDto> SelectedCommand { get; private set; }
 
+        public DelegateCommand<ToDoDto> DeleteCommand { get; private set; } 
 
         private ObservableCollection<ToDoDto> toDoDtos;
         private readonly IToDoService service;
@@ -107,6 +121,19 @@ namespace MyToDo.ViewModels
             {
             }
             finally { UpdateLoading(false); }
+        }
+
+        private async void Delete(ToDoDto obj)
+        {
+            var deleteResult =  await service.DeleteAsync(obj.Id);
+            if (deleteResult.Status)
+            {
+                var todos = ToDoDtos.FirstOrDefault(t => t.Id.Equals(obj.Id));   
+                if(todos != null)
+                {
+                    ToDoDtos.Remove(todos);
+                }
+            }
         }
 
         private async void Save()
@@ -162,11 +189,14 @@ namespace MyToDo.ViewModels
             //开启动画
             UpdateLoading(true);
 
-            var todoResult = await service.GetAllAsync(new Shared.Parameters.QueryParameter()
+            int? Status = SelectIndex == 0 ? null : SelectIndex == 2 ? 1 : 0;
+
+            var todoResult = await service.GetAllFilterAsync(new Shared.Parameters.ToDoParameter()
             {
                 PageIndex = 0,
                 PageSize = 10,
                 Search = Search,
+                Status = Status,
             });
 
             if (todoResult.Status)
