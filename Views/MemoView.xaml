@@ -130,7 +130,7 @@
 
                                         <Border
                                             Grid.RowSpan="2"
-                                            Background="Green"
+                                            Background="#1E90FF"
                                             CornerRadius="5" />
 
                                         <TextBlock

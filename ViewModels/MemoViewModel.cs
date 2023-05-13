@@ -118,15 +118,28 @@ namespace MyToDo.ViewModels
 
         private async void Delete(MemoDto obj)
         {
-            var deleteResult = await service.DeleteAsync(obj.Id);
-            if (deleteResult.Status)
+            try
             {
-                var todos = MemoDtos.FirstOrDefault(t => t.Id.Equals(obj.Id));
-                if (todos != null)
+                UpdateLoading(true);
+                var deleteResult = await service.DeleteAsync(obj.Id);
+                if (deleteResult.Status)
                 {
-                    MemoDtos.Remove(todos);
+                    var todos = MemoDtos.FirstOrDefault(t => t.Id.Equals(obj.Id));
+                    if (todos != null)
+                    {
+                        MemoDtos.Remove(todos);
+                    }
                 }
             }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                UpdateLoading(false);
+            }
+
         }
 
         private async void Save()
