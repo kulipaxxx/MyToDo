@@ -37,19 +37,26 @@
             <TextBox
                 Margin="20,0"
                 md:HintAssist.Hint="请输入待办概要"
-                DockPanel.Dock="Top" /> 
-            <TextBox
-                Margin="20,10"
-                MinHeight="80"
-                AcceptsReturn="True"
-                TextWrapping="Wrap"
-                md:HintAssist.Hint="请输入待办内容"
                 DockPanel.Dock="Top" />
+            <TextBox
+                MinHeight="80"
+                Margin="20,10"
+                md:HintAssist.Hint="请输入待办内容"
+                AcceptsReturn="True"
+                DockPanel.Dock="Top"
+                TextWrapping="Wrap" />
         </DockPanel>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Right">
-            <Button Content="取消" Margin="0 0 10 0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-            <Button Content="确定"/>
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Margin="0,0,10,0"
+                Command="{Binding CancelCommand}"
+                Content="取消"
+                Style="{StaticResource MaterialDesignOutlinedButton}" />
+            <Button Command="{Binding SaveCommand}" Content="确定" />
         </StackPanel>
     </Grid>
 </UserControl>

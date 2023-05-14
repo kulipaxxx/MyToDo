@@ -1,4 +1,7 @@
-﻿using Prism.Services.Dialogs;
+﻿using MaterialDesignThemes.Wpf;
+using MyToDo.Common;
+using Prism.Commands;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,23 +10,35 @@ using System.Threading.Tasks;
 
 namespace MyToDo.ViewModels.Dialogs
 {
-    public class AddMemoViewModel : IDialogAware
+    public class AddMemoViewModel : IDialogHostAware
     {
-        public string Title { get; set; }
-
-        public event Action<IDialogResult> RequestClose;
-
-        public bool CanCloseDialog()
+        public AddMemoViewModel()
         {
-            return true;
+            SaveCommand = new DelegateCommand(Save);
+            CancelCommand = new DelegateCommand(Cancel);
         }
 
-        public void OnDialogClosed()
+        private void Cancel()
         {
-            
+            if (DialogHost.IsDialogOpen(DialogHostName))
+                DialogHost.Close(DialogHostName, new DialogResult(ButtonResult.No));
         }
 
-        public void OnDialogOpened(IDialogParameters parameters)
+        private void Save()
+        {
+            if (DialogHost.IsDialogOpen(DialogHostName))
+            {
+                DialogParameters param = new DialogParameters();
+                DialogHost.Close(DialogHostName, new DialogResult(ButtonResult.OK, param));
+            }
+               
+        }
+
+        public string DialogHostName { get; set; }
+        public DelegateCommand SaveCommand { get; set; }
+        public DelegateCommand CancelCommand { get; set; }
+
+        public void OnDialogOpend(IDialogParameters parameters)
         {
             
         }
