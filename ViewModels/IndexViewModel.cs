@@ -1,4 +1,5 @@
 ﻿
+using MyToDo.API.Context;
 using MyToDo.Common;
 using MyToDo.Common.Models;
 using MyToDo.Service;
@@ -32,6 +33,9 @@ namespace MyToDo.ViewModels
             
             this.toDoService =  provider.Resolve<IToDoService>();
             this.memoService =  provider.Resolve<IMemoService>();
+            EditToDoCommand = new DelegateCommand<ToDoDto>(AddToDo);
+            EditMemoCommand = new DelegateCommand<MemoDto>(AddMemo);
+            ToDoCompleteCommand = new DelegateCommand<ToDoDto>(Complete);
             this.dialog = dialog;
         }
 
@@ -43,7 +47,11 @@ namespace MyToDo.ViewModels
 
         private readonly IMemoService memoService;
 
+        public DelegateCommand<ToDoDto> EditToDoCommand { get; private set; }
+        public DelegateCommand<MemoDto> EditMemoCommand { get; private set; }
         public DelegateCommand<string> ExecuteCommand { get; private set; }
+
+        public DelegateCommand<ToDoDto> ToDoCompleteCommand {  get; private set; }
 
         private ObservableCollection<TaskBar> taskBars;
 
@@ -76,8 +84,8 @@ namespace MyToDo.ViewModels
         {
             switch (obj)
             {
-                case "新增待办": AddToDo(); break;
-                case "新增备忘录": AddMemo(); break;
+                case "新增待办": AddToDo(null); break;
+                case "新增备忘录": AddMemo(null); break;
             }
         }
 
@@ -85,16 +93,34 @@ namespace MyToDo.ViewModels
         /// <summary>
         /// 添加待办事项
         /// </summary>
-        async void AddToDo()
+        async void AddToDo(ToDoDto model)
         {
-            var dialogResult = await dialog.ShowDialog("AddToDoView", null);
+            DialogParameters parameters = new DialogParameters();
+
+            if(model != null)
+            {
+                parameters.Add("value", model);
+            }
+
+            var dialogResult = await dialog.ShowDialog("AddToDoView", parameters);
             if(dialogResult.Result == ButtonResult.OK)
             {
                 var todo = dialogResult.Parameters.GetValue<ToDoDto>("value");
 
                 if(todo.Id > 0)
                 {
+                    var updateResult = await toDoService.UpdateAsync(todo);
 
+                    if (updateResult.Status)
+                    {
+                        var todoModel = ToDoDtos.FirstOrDefault(t => t.Id.Equals(todo.Id));
+                        if(todoModel != null)
+                        {
+                            todoModel.Title = todo.Title; 
+                            todoModel.Content = todo.Content; 
+                            todoModel.Status = todo.Status;
+                        }
+                    }
                 }
                 else //新增
                 {
@@ -110,16 +136,33 @@ namespace MyToDo.ViewModels
         /// <summary>
         /// 添加备忘录
         /// </summary>
-        async void AddMemo()
+        async void AddMemo(MemoDto model)
         {
-            var dialogResult = await dialog.ShowDialog("AddMemoView", null);
+            DialogParameters parameters = new DialogParameters();
+
+            if (model != null)
+            {
+                parameters.Add("value", model);
+            }
+
+            var dialogResult = await dialog.ShowDialog("AddMemoView", parameters);
             if (dialogResult.Result == ButtonResult.OK)
             {
                 var memo = dialogResult.Parameters.GetValue<MemoDto>("value");
 
                 if (memo.Id > 0)
                 {
+                    var updateResult = await memoService.UpdateAsync(memo);
 
+                    if (updateResult.Status)
+                    {
+                        var memoModel = ToDoDtos.FirstOrDefault(t => t.Id.Equals(memo.Id));
+                        if (memoModel != null)
+                        {
+                            memoModel.Title = memo.Title;
+                            memoModel.Content = memo.Content;
+                        }
+                    }
                 }
                 else //新增
                 {
@@ -132,6 +175,18 @@ namespace MyToDo.ViewModels
             }
         }
 
+        private async void Complete(ToDoDto obj)
+        {
+            var todoResult =  await toDoService.UpdateAsync(obj);
+            if (todoResult.Status)
+            {
+                var todoModel = ToDoDtos.FirstOrDefault(t => t.Id.Equals(obj.Id));
+                if(todoModel != null)
+                {
+                    ToDoDtos.Remove(todoModel);
+                }
+            }
+        }
         void CreateTaskBars()
         {
             taskBars.Add(new TaskBar() { Icon = "ClockFast", Title = "汇总", Content = "9", Color = "#FF0CA0FF", Target = "" });
