@@ -1,7 +1,10 @@
-﻿using MyToDo.Common;
+﻿
+using MyToDo.Common;
 using MyToDo.Common.Models;
+using MyToDo.Service;
 using MyToDo.Shared.Dtos;
 using Prism.Commands;
+using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
@@ -13,20 +16,33 @@ using System.Threading.Tasks;
 
 namespace MyToDo.ViewModels
 {
-    public class IndexViewModel : BindableBase
+    public class IndexViewModel : NavigationViewModel
     {
-        public IndexViewModel(IDialogHostService dialog)
+
+
+        public IndexViewModel(IContainerProvider provider
+            ,IDialogHostService dialog) : base(provider)
         {
             TaskBars = new ObservableCollection<TaskBar>();
+            ToDoDtos = new ObservableCollection<ToDoDto>();
+            MemoDtos = new ObservableCollection<MemoDto>();
+
             CreateTaskBars();
-            CreateTestData();
             ExecuteCommand = new DelegateCommand<string>(Execute);
+            
+            this.toDoService =  provider.Resolve<IToDoService>();
+            this.memoService =  provider.Resolve<IMemoService>();
             this.dialog = dialog;
         }
 
 
 
         #region 属性
+
+        private readonly IToDoService toDoService;
+
+        private readonly IMemoService memoService;
+
         public DelegateCommand<string> ExecuteCommand { get; private set; }
 
         private ObservableCollection<TaskBar> taskBars;
@@ -36,9 +52,9 @@ namespace MyToDo.ViewModels
             get { return taskBars; }
             set { taskBars = value; RaisePropertyChanged(); }
         }
-        private ObservableCollection<MemoDto> toDoDtos;
+        private ObservableCollection<ToDoDto> toDoDtos;
 
-        public ObservableCollection<MemoDto> ToDoDtos
+        public ObservableCollection<ToDoDto> ToDoDtos
         {
             get { return toDoDtos; }
             set { toDoDtos = value; RaisePropertyChanged(); }
@@ -66,14 +82,54 @@ namespace MyToDo.ViewModels
         }
 
 
-        void AddToDo()
+        /// <summary>
+        /// 添加待办事项
+        /// </summary>
+        async void AddToDo()
         {
-            dialog.ShowDialog("AddToDoView", null);
+            var dialogResult = await dialog.ShowDialog("AddToDoView", null);
+            if(dialogResult.Result == ButtonResult.OK)
+            {
+                var todo = dialogResult.Parameters.GetValue<ToDoDto>("value");
+
+                if(todo.Id > 0)
+                {
+
+                }
+                else //新增
+                {
+                    var todoResult =  await toDoService.AddAsync(todo);
+                    if (todoResult.Status)
+                    {
+                        ToDoDtos.Add((ToDoDto)todoResult.Result);
+                    }
+                }
+            }
         }
 
-        void AddMemo()
+        /// <summary>
+        /// 添加备忘录
+        /// </summary>
+        async void AddMemo()
         {
-            dialog.ShowDialog("AddMemoView", null);
+            var dialogResult = await dialog.ShowDialog("AddMemoView", null);
+            if (dialogResult.Result == ButtonResult.OK)
+            {
+                var memo = dialogResult.Parameters.GetValue<MemoDto>("value");
+
+                if (memo.Id > 0)
+                {
+
+                }
+                else //新增
+                {
+                    var memoResult = await memoService.AddAsync(memo);
+                    if (memoResult.Status)
+                    {
+                        MemoDtos.Add((MemoDto)memoResult.Result);
+                    }
+                }
+            }
         }
 
         void CreateTaskBars()
@@ -86,15 +142,8 @@ namespace MyToDo.ViewModels
 
         void CreateTestData()
         {
-            toDoDtos = new ObservableCollection<MemoDto>();
 
-            memoDtos = new ObservableCollection<MemoDto>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                toDoDtos.Add(new MemoDto() { Title = "待办" + i, Content = "正在处理中..." });
-                memoDtos.Add(new MemoDto() { Title = "备忘" + i, Content = "我的密码..." });
-            }
+            
         }
     }
 }

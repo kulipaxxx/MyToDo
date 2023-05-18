@@ -27,8 +27,8 @@
                 Margin="20,10"
                 DockPanel.Dock="Top"
                 Orientation="Horizontal">
-                <TextBlock Text="状态：" />
-                <ComboBox>
+                <TextBlock Text="状态：" VerticalAlignment="Center"/>
+                <ComboBox SelectedIndex="{Binding Model.Status}" Margin="10,0,0,0">
                     <ComboBoxItem>待办</ComboBoxItem>
                     <ComboBoxItem>已完成</ComboBoxItem>
                 </ComboBox>
@@ -37,13 +37,15 @@
             <TextBox
                 Margin="20,0"
                 md:HintAssist.Hint="请输入备忘录概要"
-                DockPanel.Dock="Top" />
+                DockPanel.Dock="Top"
+                Text="{Binding Model.Title}" />
             <TextBox
                 MinHeight="80"
                 Margin="20,10"
                 md:HintAssist.Hint="请输入备忘录内容"
                 AcceptsReturn="True"
                 DockPanel.Dock="Top"
+                Text="{Binding Model.Content}"
                 TextWrapping="Wrap" />
         </DockPanel>
 
