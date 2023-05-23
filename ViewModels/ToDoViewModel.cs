@@ -215,6 +215,16 @@ namespace MyToDo.ViewModels
         public override void OnNavigatedTo(NavigationContext navigationContext)
         {
             base.OnNavigatedTo(navigationContext);
+            //接受首页跳转条件值
+            if (navigationContext.Parameters.ContainsKey("Value"))
+            {
+                selectIndex = navigationContext.Parameters.GetValue<int>("Value");
+            }
+            else
+            {
+                selectIndex = 0;
+            }
+            
 
             GetDataAsync();
         }
