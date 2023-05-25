@@ -125,35 +125,44 @@ namespace MyToDo.ViewModels
             var dialogResult = await dialog.ShowDialog("AddToDoView", parameters);
             if (dialogResult.Result == ButtonResult.OK)
             {
-                var todo = dialogResult.Parameters.GetValue<ToDoDto>("value");
-
-                if (todo.Id > 0)
+                try
                 {
-                    var updateResult = await toDoService.UpdateAsync(todo);
+                    UpdateLoading(true);
+                    var todo = dialogResult.Parameters.GetValue<ToDoDto>("value");
 
-                    if (updateResult.Status)
+                    if (todo.Id > 0)
                     {
-                        var todoModel = SummaryDto.ToDoList.FirstOrDefault(t => t.Id.Equals(todo.Id));
-                        if (todoModel != null)
+                        var updateResult = await toDoService.UpdateAsync(todo);
+
+                        if (updateResult.Status)
                         {
-                            todoModel.Title = todo.Title;
-                            todoModel.Content = todo.Content;
-                            todoModel.Status = todo.Status;
+                            var todoModel = SummaryDto.ToDoList.FirstOrDefault(t => t.Id.Equals(todo.Id));
+                            if (todoModel != null)
+                            {
+                                todoModel.Title = todo.Title;
+                                todoModel.Content = todo.Content;
+                                todoModel.Status = todo.Status;
+                            }
+                        }
+                    }
+                    else //新增
+                    {
+                        var todoResult = await toDoService.AddAsync(todo);
+                        if (todoResult.Status)
+                        {
+                            summaryDto.Sum += 1;
+
+                            SummaryDto.ToDoList.Add((ToDoDto)todoResult.Result);
+                            summaryDto.CompletedRatio = (summaryDto.CompletedCount / (double)summaryDto.Sum).ToString("0%");
+                            this.Refresh();
                         }
                     }
                 }
-                else //新增
+                finally
                 {
-                    var todoResult = await toDoService.AddAsync(todo);
-                    if (todoResult.Status)
-                    {
-                        summaryDto.Sum += 1;
-                        
-                        SummaryDto.ToDoList.Add((ToDoDto)todoResult.Result);
-                        summaryDto.CompletedRatio = (summaryDto.CompletedCount / (double)summaryDto.Sum).ToString("0%");
-                        this.Refresh();
-                    }
+                    UpdateLoading(false);
                 }
+                
             }
         }
 
@@ -172,50 +181,69 @@ namespace MyToDo.ViewModels
             var dialogResult = await dialog.ShowDialog("AddMemoView", parameters);
             if (dialogResult.Result == ButtonResult.OK)
             {
-                var memo = dialogResult.Parameters.GetValue<MemoDto>("value");
-
-                if (memo.Id > 0)
+                try
                 {
-                    var updateResult = await memoService.UpdateAsync(memo);
+                    UpdateLoading(true);
+                    var memo = dialogResult.Parameters.GetValue<MemoDto>("value");
 
-                    if (updateResult.Status)
+                    if (memo.Id > 0)
                     {
-                        var memoModel = SummaryDto.MemoList.FirstOrDefault(t => t.Id.Equals(memo.Id));
-                        if (memoModel != null)
+                        var updateResult = await memoService.UpdateAsync(memo);
+
+                        if (updateResult.Status)
                         {
-                            memoModel.Title = memo.Title;
-                            memoModel.Content = memo.Content;
+                            var memoModel = SummaryDto.MemoList.FirstOrDefault(t => t.Id.Equals(memo.Id));
+                            if (memoModel != null)
+                            {
+                                memoModel.Title = memo.Title;
+                                memoModel.Content = memo.Content;
+                            }
+                        }
+                    }
+                    else //新增
+                    {
+                        var memoResult = await memoService.AddAsync(memo);
+                        if (memoResult.Status)
+                        {
+                            summaryDto.MemoeCount += 1;
+                            SummaryDto.MemoList.Add((MemoDto)memoResult.Result);
+                            this.Refresh();
                         }
                     }
                 }
-                else //新增
+                finally
                 {
-                    var memoResult = await memoService.AddAsync(memo);
-                    if (memoResult.Status)
-                    {
-                        summaryDto.MemoeCount += 1;
-                        SummaryDto.MemoList.Add((MemoDto)memoResult.Result);
-                        this.Refresh();
-                    }
+                    UpdateLoading(false);
                 }
+                
             }
         }
 
         private async void Complete(ToDoDto obj)
         {
-            var todoResult = await toDoService.UpdateAsync(obj);
-            if (todoResult.Status)
+            try
             {
-                var todoModel = SummaryDto.ToDoList.FirstOrDefault(t => t.Id.Equals(obj.Id));
-                if (todoModel != null)
+                UpdateLoading(true);
+                var todoResult = await toDoService.UpdateAsync(obj);
+                if (todoResult.Status)
                 {
-                    SummaryDto.ToDoList.Remove(todoModel);
-                    summaryDto.CompletedCount += 1;
-                    summaryDto.CompletedRatio = (summaryDto.CompletedCount / (double)summaryDto.Sum).ToString("0%");
+                    var todoModel = SummaryDto.ToDoList.FirstOrDefault(t => t.Id.Equals(obj.Id));
+                    if (todoModel != null)
+                    {
+                        SummaryDto.ToDoList.Remove(todoModel);
+                        summaryDto.CompletedCount += 1;
+                        summaryDto.CompletedRatio = (summaryDto.CompletedCount / (double)summaryDto.Sum).ToString("0%");
 
-                    this.Refresh();
+                        this.Refresh();
+                    }
+                    eventAggregator.SendMessage("已完成！");
                 }
             }
+            finally
+            {
+                UpdateLoading(false);
+            }
+            
         }
         void CreateTaskBars()
         {
