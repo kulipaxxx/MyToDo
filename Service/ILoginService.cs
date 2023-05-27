@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyToDo.Service
 {
-    public interface ITest
+    internal class ILoginService
     {
     }
 }
