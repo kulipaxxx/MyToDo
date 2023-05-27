@@ -56,6 +56,7 @@ namespace MyToDo
                .Register<HttpRestClient>(made: Parameters.Of.Type<string>(serviceKey: "apiUrl"));
             containerRegistry.GetContainer().RegisterInstance(@"http://localhost:64496/", serviceKey: "apiUrl");
             
+            containerRegistry.Register<ILoginService, LoginService>();
             containerRegistry.Register<IToDoService, ToDoService>(); 
             containerRegistry.Register<IMemoService, MemoService>();
             containerRegistry.Register<IDialogHostService, DialogHostService>();

@@ -1,4 +1,5 @@
-﻿using MyToDo.Common;
+﻿using MyToDo.API.Service;
+using MyToDo.Common;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
@@ -12,9 +13,10 @@ namespace MyToDo.ViewModels
 {
     public class LoginViewModel : BindableBase, IDialogAware
     {
-        public LoginViewModel()
+        public LoginViewModel(ILoginService loginService)
         {
             ExecuteCommand = new DelegateCommand<string>(Execute);
+            this.loginService = loginService;
         }
 
 
@@ -51,6 +53,7 @@ namespace MyToDo.ViewModels
         }
 
         private string password;
+        private readonly ILoginService loginService;
 
         public string Password
         {
@@ -75,7 +78,12 @@ namespace MyToDo.ViewModels
 
         void Login()
         {
+            if(string.IsNullOrWhiteSpace(account) || string.IsNullOrWhiteSpace(password))
+            {
+                return;
+            }
 
+            loginService.LoginAsync(account, password);
         }
 
         void LoginOut()
