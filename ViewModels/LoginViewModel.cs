@@ -1,5 +1,6 @@
-﻿using MyToDo.API.Service;
+﻿
 using MyToDo.Common;
+using MyToDo.Service;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
@@ -32,7 +33,7 @@ namespace MyToDo.ViewModels
 
         public void OnDialogClosed()
         {
-
+            LoginOut();
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
@@ -78,17 +79,25 @@ namespace MyToDo.ViewModels
 
         void Login()
         {
-            if(string.IsNullOrWhiteSpace(account) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(account) || string.IsNullOrWhiteSpace(password))
             {
                 return;
             }
 
-            loginService.LoginAsync(account, password);
+            var Result = loginService.LoginAsync(new Shared.Dtos.UserDto { Account = account, PassWord = password });
+
+            if (Result != null)
+            {
+                RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+            }
+
+            //登录失败提示
+
         }
 
         void LoginOut()
         {
-
+            RequestClose?.Invoke(new DialogResult(ButtonResult.No));
         }
 
     }
