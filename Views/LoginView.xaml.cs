@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MyToDo.Extensions;
+using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,11 +20,18 @@ namespace MyToDo.Views
     /// <summary>
     /// LoginView.xaml 的交互逻辑
     /// </summary>
-    public partial class LoginView : Page
+    public partial class LoginView : UserControl
     {
-        public LoginView()
+        public LoginView(IEventAggregator aggregator)
         {
             InitializeComponent();
+
+            //注册消息提示
+            aggregator.ResgiterMessage(arg =>
+            {
+                LoginSnakeBar.MessageQueue.Enqueue(arg.Message);
+            }, "Login");
+
         }
     }
 }

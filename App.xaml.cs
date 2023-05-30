@@ -34,16 +34,15 @@ namespace MyToDo
 
             dialog.ShowDialog("LoginView", callback =>
             {
-                if(callback.Result == ButtonResult.OK)
+                if (callback.Result != ButtonResult.OK)
                 {
-                    Application.Current.Shutdown();
+                    Environment.Exit(0);
                     return;
                 }
+
                 var service = App.Current.MainWindow.DataContext as IConfigureService;
                 if (service != null)
-                {
                     service.Configure();
-                }
                 base.OnInitialized();
             });
         }
@@ -55,12 +54,13 @@ namespace MyToDo
             containerRegistry.GetContainer()
                .Register<HttpRestClient>(made: Parameters.Of.Type<string>(serviceKey: "apiUrl"));
             containerRegistry.GetContainer().RegisterInstance(@"http://localhost:64496/", serviceKey: "apiUrl");
-            
+
             containerRegistry.Register<ILoginService, LoginService>();
-            containerRegistry.Register<IToDoService, ToDoService>(); 
+            containerRegistry.Register<IToDoService, ToDoService>();
             containerRegistry.Register<IMemoService, MemoService>();
             containerRegistry.Register<IDialogHostService, DialogHostService>();
 
+            //containerRegistry.RegisterDialog<LoginView, LoginViewModel>();
             containerRegistry.RegisterDialog<LoginView, LoginViewModel>();
 
             containerRegistry.RegisterForNavigation<AddToDoView, AddToDoViewModel>();

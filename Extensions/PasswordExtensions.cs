@@ -9,62 +9,53 @@ using System.Windows.Controls;
 
 namespace MyToDo.Extensions
 {
-    public class PasswordExtensions
+    public class PassWordExtensions
     {
-
-
-        public static string GetPassword(DependencyObject obj)
+        public static string GetPassWord(DependencyObject obj)
         {
-            return (string)obj.GetValue(PasswordProperty);
+            return (string)obj.GetValue(PassWordProperty);
         }
 
-        public static void SetPassword(DependencyObject obj, string value)
+        public static void SetPassWord(DependencyObject obj, string value)
         {
-            obj.SetValue(PasswordProperty, value);
+            obj.SetValue(PassWordProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for Password.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty PasswordProperty =
-            DependencyProperty.RegisterAttached("Password", typeof(string), typeof(PasswordExtensions), new PropertyMetadata(string.Empty,OnPasswordPropertyChanged));
+        public static readonly DependencyProperty PassWordProperty =
+            DependencyProperty.RegisterAttached("PassWord", typeof(string), typeof(PassWordExtensions), new FrameworkPropertyMetadata(string.Empty, OnPassWordPropertyChanged));
 
-        static void OnPasswordPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        static void OnPassWordPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var passWord = sender as PasswordBox;
-
             string password = (string)e.NewValue;
 
-            if(passWord != null && passWord.Password != password) {
+            if (passWord != null && passWord.Password != password)
                 passWord.Password = password;
-            }
         }
-
     }
 
-    public class PasswordBehavior: Behavior<PasswordBox>
+    public class PasswordBehavior : Behavior<PasswordBox>
     {
         protected override void OnAttached()
         {
             base.OnAttached();
-            //注册事件
             AssociatedObject.PasswordChanged += AssociatedObject_PasswordChanged;
         }
 
         private void AssociatedObject_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            PasswordBox passwordBox =  sender as PasswordBox;
-            string password = PasswordExtensions.GetPassword(passwordBox);
+            PasswordBox passwordBox = sender as PasswordBox;
+            string password = PassWordExtensions.GetPassWord(passwordBox);
 
-            if(password != null && passwordBox.Password != password)
-            {
-                PasswordExtensions.SetPassword(passwordBox, password);
-            }
+            if (passwordBox != null && passwordBox.Password != password)
+                PassWordExtensions.SetPassWord(passwordBox, passwordBox.Password);
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            //取消事件
             AssociatedObject.PasswordChanged -= AssociatedObject_PasswordChanged;
         }
     }
+
 }

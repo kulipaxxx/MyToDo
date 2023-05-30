@@ -1,7 +1,9 @@
-﻿
-using MyToDo.Common;
+﻿using MyToDo.Common;
+using MyToDo.Extensions;
 using MyToDo.Service;
+using MyToDo.Shared.Dtos;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
@@ -14,15 +16,15 @@ namespace MyToDo.ViewModels
 {
     public class LoginViewModel : BindableBase, IDialogAware
     {
-        public LoginViewModel(ILoginService loginService)
+        public LoginViewModel(ILoginService loginService, IEventAggregator aggregator)
         {
+            UserDto = new ResgiterUserDto();
             ExecuteCommand = new DelegateCommand<string>(Execute);
             this.loginService = loginService;
+            this.aggregator = aggregator;
         }
 
-
-
-        public string Title { get; private set; } = "ToDo";
+        public string Title { get; set; } = "ToDo";
 
         public event Action<IDialogResult> RequestClose;
 
@@ -38,35 +40,40 @@ namespace MyToDo.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-
         }
 
-        #region 属性
-        public DelegateCommand<string> ExecuteCommand;
+        #region 登录
+        private readonly IEventAggregator aggregator;
 
-        private string account;
+        private int selectIndex;
 
-        public string Account
+        public int SelectIndex
         {
-            get { return account; }
-            //实现通知
-            set { account = value; RaisePropertyChanged(); }
+            get { return selectIndex; }
+            set { selectIndex = value; RaisePropertyChanged(); }
         }
 
-        private string password;
+
+        public DelegateCommand<string> ExecuteCommand { get; private set; }
+
+
+        private string userName;
+
+        public string UserName
+        {
+            get { return userName; }
+            set { userName = value; RaisePropertyChanged(); }
+        }
+
+        private string passWord;
         private readonly ILoginService loginService;
 
-        public string Password
+
+        public string PassWord
         {
-            get { return password; }
-            set { password = value; }
+            get { return passWord; }
+            set { passWord = value; RaisePropertyChanged(); }
         }
-
-
-
-
-
-        #endregion
 
         private void Execute(string obj)
         {
@@ -74,31 +81,88 @@ namespace MyToDo.ViewModels
             {
                 case "Login": Login(); break;
                 case "LoginOut": LoginOut(); break;
+                case "Resgiter": Resgiter(); break;
+                case "ResgiterPage": SelectIndex = 1; break;
+                case "Return": SelectIndex = 0; break;
             }
         }
 
-        void Login()
+        private ResgiterUserDto userDto;
+
+        public ResgiterUserDto UserDto
         {
-            if (string.IsNullOrWhiteSpace(account) || string.IsNullOrWhiteSpace(password))
+            get { return userDto; }
+            set { userDto = value; RaisePropertyChanged(); }
+        }
+
+        async void Login()
+        {
+            if (string.IsNullOrWhiteSpace(UserName) ||
+                string.IsNullOrWhiteSpace(PassWord))
             {
                 return;
             }
 
-            var Result = loginService.LoginAsync(new Shared.Dtos.UserDto { Account = account, PassWord = password });
+            var loginResult = await loginService.LoginAsync(new Shared.Dtos.UserDto()
+            {
+                Account = UserName,
+                UserName = "test",
+                PassWord = PassWord
+            });
 
-            if (Result != null)
+            if (loginResult != null && loginResult.Status)
             {
                 RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
             }
+            else
+            {
+                //登录失败提示...
+                aggregator.SendMessage(loginResult.Message, "Login");
+            }
+        }
 
-            //登录失败提示
+        private async void Resgiter()
+        {
+            if (string.IsNullOrWhiteSpace(UserDto.Account) ||
+                string.IsNullOrWhiteSpace(UserDto.UserName) ||
+                string.IsNullOrWhiteSpace(UserDto.PassWord) ||
+                string.IsNullOrWhiteSpace(UserDto.NewPassWord))
+            {
+                aggregator.SendMessage("请输入完整的注册信息！");
+                return;
+            }
 
+            if (UserDto.PassWord != UserDto.NewPassWord)
+            {
+                aggregator.SendMessage("密码不一致,请重新输入！");
+                return;
+            }
+
+            var resgiterResult = await loginService.RegisterAsync(new Shared.Dtos.UserDto()
+            {
+                Account = UserDto.Account,
+                UserName = UserDto.UserName,
+                PassWord = UserDto.PassWord
+            });
+
+            if (resgiterResult != null && resgiterResult.Status)
+            {
+                aggregator.SendMessage(resgiterResult.Message, "Login");
+                //注册成功,返回登录页页面
+                SelectIndex = 0;
+            }
+            else
+                aggregator.SendMessage(resgiterResult.Message, "Login");
         }
 
         void LoginOut()
         {
             RequestClose?.Invoke(new DialogResult(ButtonResult.No));
         }
+
+        #endregion
+
+
 
     }
 }
