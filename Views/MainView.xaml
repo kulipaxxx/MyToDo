@@ -86,7 +86,7 @@
                     materialDesign:ShadowAssist.ShadowDepth="Depth2"
                     DockPanel.Dock="Top"
                     Mode="PrimaryMid">
-                    <DockPanel LastChildFill="True">
+                    <DockPanel LastChildFill="True" HorizontalAlignment="Right" Width="768">
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                             <Button
                                 x:Name="btnMin"
@@ -101,7 +101,7 @@
                                 Content="✕"
                                 Style="{StaticResource MaterialDesignFlatMidBgButton}" />
                         </StackPanel>
-
+                        
                         <materialDesign:PopupBox DockPanel.Dock="Right">
                             <materialDesign:PopupBox.ToggleContent>
                                 <Image
@@ -116,14 +116,12 @@
                                     </Image.Clip>
                                 </Image>
                             </materialDesign:PopupBox.ToggleContent>
-
                             <StackPanel>
-                                <!--<Button Command="{Binding AppCenterCommand}" Content="个人中心"/>-->
-                                <Button Command="{Binding LoginOutCommand}" Content="注销当前账户" />
+                                <!--<Button Command="{Binding AppCenterCommand}" Content="个人中心"></Button> -->
+                                <Button Command="{Binding LoginOutCommand}" Content="注销当前账户"></Button>
                             </StackPanel>
                         </materialDesign:PopupBox>
-
-
+                        
 
                         <StackPanel Orientation="Horizontal">
                             <ToggleButton

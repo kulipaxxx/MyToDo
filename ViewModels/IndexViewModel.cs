@@ -26,7 +26,7 @@ namespace MyToDo.ViewModels
         public IndexViewModel(IContainerProvider provider
             , IDialogHostService dialog) : base(provider)
         {
-            Title = $"你好, CodeC，{DateTime.Now.GetDateTimeFormats('D')[1].ToString()}";
+            Title = $"你好, {AppSession.userName}，{DateTime.Now.GetDateTimeFormats('D')[1].ToString()}";
             CreateTaskBars();
             ExecuteCommand = new DelegateCommand<string>(Execute);
 

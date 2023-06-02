@@ -112,7 +112,9 @@ namespace MyToDo.ViewModels
 
             if (loginResult != null && loginResult.Status)
             {
+                AppSession.userName = loginResult.Result.UserName;
                 RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+                return;
             }
             else
             {

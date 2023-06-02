@@ -28,6 +28,23 @@ namespace MyToDo
             return Container.Resolve<MainView>();
         }
 
+        public static void LoginOut(IContainerProvider container)
+        {
+            Current.MainWindow.Hide();
+
+            var dialog = container.Resolve<IDialogService>();
+
+            dialog.ShowDialog("LoginView", callback =>
+            {
+                if (callback.Result != ButtonResult.OK)
+                {
+                    Environment.Exit(0);
+                    return;
+                }
+
+                Current.MainWindow.Show();
+            });
+        }
         protected override void OnInitialized()
         {
             var dialog = Container.Resolve<IDialogService>();

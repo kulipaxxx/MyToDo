@@ -2,6 +2,7 @@
 using MyToDo.Common.Models;
 using MyToDo.Extensions;
 using Prism.Commands;
+using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
@@ -15,11 +16,17 @@ namespace MyToDo.ViewModels
 {
     public class MainViewModel : BindableBase, IConfigureService
     {
-        public MainViewModel(IRegionManager regionManager)
+        public MainViewModel(IRegionManager regionManager, IContainerProvider container)
         {
+            UserName = AppSession.userName;
             menuBars = new ObservableCollection<MenuBar>();
             NavigateCommand = new DelegateCommand<MenuBar>(Navigate);
             this.regionManager = regionManager;
+            LoginOutCommand = new DelegateCommand(() =>
+            {
+                //注销当前用户
+                App.LoginOut(container);
+            });
             GoBackCommand = new DelegateCommand(() =>
             {
                 if (journal != null && journal.CanGoBack)
@@ -47,6 +54,18 @@ namespace MyToDo.ViewModels
 
             
         }
+
+        public DelegateCommand LoginOutCommand { get;private set; }
+
+
+        private string userName;
+
+        public string UserName
+        {
+            get { return userName; }
+            set { userName = value; }
+        }
+
 
         //委派命令
         public DelegateCommand<MenuBar> NavigateCommand { get; private set; }
